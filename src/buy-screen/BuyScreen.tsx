@@ -35,7 +35,9 @@ export const BuyScreen = ({ stockItem, bot, setThx }: Props) => {
     setLoading(true);
     sendDataToGA({
       sum: stockItem.price_today * lots * stockItem.lot,
-      active: stockItem.ticker,
+      ticker: stockItem.ticker,
+      bot: botConnected ? bot.name : 'none',
+      risk: 'none',
     }).then(() => {
       LS.setItem(LSKeys.ShowThx, true);
       setThx(true);
@@ -123,7 +125,16 @@ export const BuyScreen = ({ stockItem, bot, setThx }: Props) => {
             </Typography.Text>
           </div>
 
-          <ButtonMobile view="secondary" size={32} onClick={() => setBotConnected(!botConnected)}>
+          <ButtonMobile
+            view="secondary"
+            size={32}
+            onClick={() => {
+              if (!botConnected) {
+                window.gtag('event', '6332_bot_activate', { ticker: stockItem.ticker, var: 'var2', bot: bot.name });
+              }
+              setBotConnected(!botConnected);
+            }}
+          >
             {botConnected ? 'Отключить' : 'Подключить'}
           </ButtonMobile>
         </div>
